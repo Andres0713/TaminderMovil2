@@ -9,21 +9,25 @@ import {
   Button,
 } from "react-native";
 import { db } from "../../src/utils/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 
 const ReportesList = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); // Usuario seleccionado para mostrar detalles
   const [modalVisible, setModalVisible] = useState(false); // Controla la visibilidad del modal
 
-  // Fetch de datos desde Firestore
+  // Escucha de cambios en tiempo real
   useEffect(() => {
-    const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(db, "users"));
-      const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const unsubscribe = onSnapshot(collection(db, "users"), (querySnapshot) => {
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setUsers(data);
-    };
-    fetchData();
+    });
+
+    // Limpia el listener al desmontar el componente
+    return () => unsubscribe();
   }, []);
 
   // Maneja la selección de un usuario
@@ -55,6 +59,8 @@ const ReportesList = () => {
             <Text style={styles.detail}>Edad: {item.age}</Text>
           </TouchableOpacity>
         )}
+        initialNumToRender={10} // Renderiza inicialmente 10 elementos
+        removeClippedSubviews={true} // Mejora el rendimiento
       />
 
       {/* Modal para mostrar detalles */}
