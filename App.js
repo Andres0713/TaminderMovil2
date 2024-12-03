@@ -5,7 +5,6 @@ import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import app from './src/utils/firebase'//se encuentra adentro de firebase
 import Auth from './src/components/Auth';
 import LoginIndex from './src/components/loginIndex';
-import App2 from './src_Prestamo/components/App2';
 import ListBirthday from './src/components/ListBirthday';
 import Admin from './Admin'
 
