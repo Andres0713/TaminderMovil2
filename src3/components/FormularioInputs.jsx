@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { Picker } from '@react-native-picker/picker';
 
 const FormularioInputs = ({ formData, onInputChange, onSubmit }) => {
   return (
@@ -7,31 +8,44 @@ const FormularioInputs = ({ formData, onInputChange, onSubmit }) => {
       <TextInput
         style={styles.input}
         placeholder="Nombre"
-        value={formData.name}
-        onChangeText={(text) => onInputChange("name", text)}
+        value={formData.nombre}
+        onChangeText={(text) => onInputChange("nombre", text)}
       />
       <TextInput
         style={styles.input}
-        placeholder="Edad"
-        value={formData.age}
-        keyboardType="numeric" // Asegura que solo se ingresen números
-        onChangeText={(text) => onInputChange("age", text)}
+        placeholder="Apellido paterno"
+        value={formData.apellido_paterno}
+        onChangeText={(text) => onInputChange("apellido_paterno", text)}
       />
       <TextInput
         style={styles.input}
-        placeholder="Horas Trabajadas"
-        value={formData.hoursWorked}
-        keyboardType="numeric" // Asegura que solo se ingresen números
-        onChangeText={(text) => onInputChange("hoursWorked", text)}
+        placeholder="Apellido materno"
+        value={formData.apellido_materno}
+        onChangeText={(text) => onInputChange("apellido_materno", text)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Pago por Día"
-        value={formData.dailyPay}
-        keyboardType="numeric" // Asegura que solo se ingresen números
-        onChangeText={(text) => onInputChange("dailyPay", text)}
-      />
-
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={formData.rol}
+          onValueChange={(itemValue) => onInputChange("rol", itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Selecciona un rol" value="" />
+          <Picker.Item label="Administrador" value="Administrador" />
+          <Picker.Item label="Gerente" value="Gerente" />
+          <Picker.Item label="Staff" value="Staff" />
+        </Picker>
+      </View>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={formData.estado}
+          onValueChange={(itemValue) => onInputChange("estado", itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Selecciona un estado" value="" />
+          <Picker.Item label="Activo" value="Activo" />
+          <Picker.Item label="Inactivo" value="Inactivo" />
+        </Picker>
+      </View>
       <TouchableOpacity style={styles.button} onPress={onSubmit}>
         <Text style={styles.buttonText}>Agregar Usuario</Text>
       </TouchableOpacity>
@@ -64,6 +78,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  pickerContainer: {
+    width: "80%",
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    marginBottom: 16,
+    backgroundColor: "#fff",
+  },
+  picker: {
+    width: "100%",
+    height: "100%",
   },
 });
 
