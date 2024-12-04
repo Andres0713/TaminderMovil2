@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { db } from "../../src/utils/firebase";
 import { doc, collection, onSnapshot, deleteDoc, setDoc } from "firebase/firestore";
+import { Picker } from '@react-native-picker/picker';
 
 const ReportesList = () => {
   const [users, setUsers] = useState([]);
@@ -46,23 +47,18 @@ const ReportesList = () => {
     setModalVisible(false);
   };
 
-  // Maneja la edición de un usuario
-  const handleEditUser = (user) => {
-    setEditUser(user);
+  // Abre el modal de edición
+  const handleEditUser = () => {
+    setEditUser(selectedUser);
     setIsEditing(true);
+    setModalVisible(false); // Cierra el modal de detalles
   };
 
   // Guarda los cambios del usuario editado
   const handleSaveUser = async () => {
     if (editUser) {
       try {
-        await setDoc(doc(db, "users", editUser.id), {
-          nombre: editUser.nombre,
-          apellido_paterno: editUser.apellido_paterno,
-          apellido_materno: editUser.apellido_materno,
-          rol: editUser.rol,
-          estado: editUser.estado
-        });
+        await setDoc(doc(db, "users", editUser.id), editUser);
         Alert.alert("Usuario actualizado", "La información del usuario ha sido actualizada.");
         setIsEditing(false);
         setEditUser(null);
@@ -71,11 +67,7 @@ const ReportesList = () => {
       }
     }
   };
-  /*//eliminar
-  const eliminar = (id) => {
-    deleteDoc(doc(db, "users", id));
-    closeModal()
-  };*/
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lista de Reportes</Text>
@@ -97,10 +89,7 @@ const ReportesList = () => {
             </TouchableOpacity>
           </View>
         )}
-        initialNumToRender={10} // Renderiza inicialmente 10 elementos
-        removeClippedSubviews={true} // Mejora el rendimiento
       />
-
 
       {/* Modal para mostrar detalles */}
       {selectedUser && (
@@ -114,15 +103,12 @@ const ReportesList = () => {
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Detalles del Usuario</Text>
               <Text style={styles.modalText}>Nombre: {selectedUser.nombre}</Text>
-              <Text style={styles.modalText}>Apellido paterno: {selectedUser.apellido_paterno}</Text>
-              <Text style={styles.modalText}>
-                Apellido materno: {selectedUser.apellido_materno}
-              </Text>
-              <Text style={styles.modalText}>
-                Rol: {selectedUser.rol}
-              </Text>
+              <Text style={styles.modalText}>Apellido Paterno: {selectedUser.apellido_paterno}</Text>
+              <Text style={styles.modalText}>Apellido Materno: {selectedUser.apellido_materno}</Text>
+              <Text style={styles.modalText}>Rol: {selectedUser.rol}</Text>
+              <Text style={styles.modalText}>Estado: {selectedUser.estado}</Text>
               <Button title="Cerrar" onPress={closeModal} />
-              <Button title="Editar" onPress={() => eliminar(selectedUser.id)} />
+              <Button title="Modificar" onPress={handleEditUser} />
             </View>
           </View>
         </Modal>
@@ -147,28 +133,54 @@ const ReportesList = () => {
               />
               <TextInput
                 style={styles.input}
-                value={String(editUser?.apellido_paterno)}
-                onChangeText={(text) => setEditUser({ ...editUser, apellido_paterno: text })}
-                placeholder="Apellido paterno"
+                value={editUser?.apellido_paterno}
+                onChangeText={(text) =>
+                  setEditUser({ ...editUser, apellido_paterno: text })
+                }
+                placeholder="Apellido Paterno"
               />
               <TextInput
                 style={styles.input}
-                value={String(editUser?.apellido_materno || 0)}
-                onChangeText={(text) => setEditUser({ ...editUser, apellido_materno: text })}
-                placeholder="Apellido materno"
+                value={editUser?.apellido_materno}
+                onChangeText={(text) =>
+                  setEditUser({ ...editUser, apellido_materno: text })
+                }
+                placeholder="Apellido Materno"
               />
-              <TextInput
-                style={styles.input}
-                value={String(editUser?.rol || 0)}
-                onChangeText={(text) => setEditUser({ ...editUser, rol: text })}
-                placeholder="Rol"
-              />
-              <TextInput
-                style={styles.input}
-                value={String(editUser?.estado || 0)}
-                onChangeText={(text) => setEditUser({ ...editUser, estado: text })}
-                placeholder="Rol"
-              />
+              {/* Selector para Rol */}
+              <View style={styles.pickerContainer}>
+                <Text style={styles.pickerLabel}>Rol:</Text>
+                <Picker
+                  selectedValue={editUser?.rol}
+                  onValueChange={(itemValue) =>
+                    setEditUser({ ...editUser, rol: itemValue })
+                  }
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Selecciona un rol" value="" />
+                  <Picker.Item label="Administrador" value="Administrador" />
+                  <Picker.Item label="Gerente" value="Gerente" />
+                  <Picker.Item label="Staff" value="Staff" />
+                </Picker>
+              </View>
+
+              {/* Selector para Estado */}
+              <View style={styles.pickerContainer}>
+                <Text style={styles.pickerLabel}>Estado:</Text>
+                <Picker
+                  selectedValue={editUser?.estado}
+                  onValueChange={(itemValue) =>
+                    setEditUser({ ...editUser, estado: itemValue })
+                  }
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Selecciona un estado" value="" />
+                  <Picker.Item label="Activo" value="Activo" />
+                  <Picker.Item label="Inactivo" value="Inactivo" />
+                </Picker>
+              </View>
+              <Button title="Guardar" onPress={handleSaveUser} />
+              <Button title="Cancelar" onPress={() => setIsEditing(false)} />
             </View>
           </View>
         </Modal>
@@ -176,8 +188,6 @@ const ReportesList = () => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -201,15 +211,6 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 150,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
   detail: {
     fontSize: 16,
@@ -247,6 +248,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 5,
     width: "100%",
+  },
+  pickerContainer: {
+    width: "80%",
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 8,
+    justifyContent: 'center',
+    marginBottom: 16,
+    backgroundColor: "#fff",
+  },
+  picker: {
+    width: "100%",
+    height: "100%",
   },
 });
 
