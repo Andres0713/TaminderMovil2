@@ -6,16 +6,28 @@ import Icon from "react-native-vector-icons/Ionicons";
 import AltasForm from "./src3/components/AltasForm";
 import ReportesList from "./src3/components/ReportesList";
 import Bajas from "./src3/components/Bajas";
+import apps from './src/utils/firebase'//se encuentra adentro de firebase
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 
+function logOut() {
+  //poner el código para poder cerrar sesión
+  const auth = getAuth(apps);
+  signOut(auth).then(() => {
+    console.log('Cerró sesión')
+    
+  }).catch((error) => {
+    //An error happened
+  })
+}
 function AltasScreen({ navigation }) {
   return (
     <View style={styles.screen}>
       <AltasForm />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Bajas")}
+        onPress={() => logOut()}
       >
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
@@ -28,7 +40,7 @@ function BajasScreen({ navigation }) {
     <View style={styles.screen}>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Modificaciones")}
+        onPress={() => logOut()}
       >
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
@@ -45,7 +57,7 @@ function ReportesScreen({ navigation }) {
       <ReportesList />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate("Altas")}
+        onPress={() => logOut()}
       >
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
