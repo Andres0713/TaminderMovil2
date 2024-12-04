@@ -37,18 +37,7 @@ function BajasScreen({ navigation }) {
   );
 }
 
-function ModificacionesScreen({ navigation }) {
-  return (
-    <View style={styles.screen}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Reportes")}
-      >
-        <Icon name="arrow-forward" size={20} color="#fff" />
-      </TouchableOpacity>
-    </View>
-  );
-}
+
 
 function ReportesScreen({ navigation }) {
   return (
@@ -75,8 +64,7 @@ export default function App() {
               iconName = focused ? "person-add" : "person-add-outline";
             } else if (route.name === "Bajas") {
               iconName = focused ? "trash" : "trash-outline";
-            } else if (route.name === "Modificaciones") {
-              iconName = focused ? "create" : "create-outline";
+            
             } else if (route.name === "Reportes") {
               iconName = focused ? "bar-chart" : "bar-chart-outline";
             }
@@ -88,7 +76,6 @@ export default function App() {
       >
         <Tab.Screen name="Altas" component={AltasScreen} />
         <Tab.Screen name="Bajas" component={BajasScreen} />
-        <Tab.Screen name="Modificaciones" component={ModificacionesScreen} />
         <Tab.Screen name="Reportes" component={ReportesScreen} />
       </Tab.Navigator>
     </NavigationContainer>
