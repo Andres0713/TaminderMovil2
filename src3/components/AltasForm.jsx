@@ -6,10 +6,11 @@ import { collection, addDoc } from "firebase/firestore";
 
 const AltasForm = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    hoursWorked: "",
-    dailyPay: "",
+    nombre: "",
+    apellido_paterno: "",
+    apellido_materno: "",
+    rol: "",
+    estado: ""
   });
 
   const handleInputChange = (field, value) => {
@@ -17,25 +18,27 @@ const AltasForm = () => {
   };
 
   const handleAdd = async () => {
-    const { name, age, hoursWorked, dailyPay } = formData;
+    const { nombre, apellido_paterno, apellido_materno, rol, estado } = formData;
 
     // Validación de campos
-    if (name && age && hoursWorked && dailyPay) {
+    if (nombre && apellido_paterno && apellido_materno && rol && estado) {
       try {
         console.log("Enviando datos a Firestore:", formData); // Para depuración
         await addDoc(collection(db, "users"), {
-          name,
-          age: parseInt(age), // Convertimos a número
-          hoursWorked: parseInt(hoursWorked), // Convertimos a número
-          dailyPay: parseFloat(dailyPay), // Convertimos a número con decimales
+          nombre,
+          apellido_paterno: apellido_paterno, 
+          apellido_materno: apellido_materno, 
+          rol: rol, 
+          estado: estado
         });
         alert("Usuario agregado con éxito");
         // Limpia el formulario
         setFormData({
-          name: "",
-          age: "",
-          hoursWorked: "",
-          dailyPay: "",
+          nombre: "",
+          apellido_paterno: "",
+          apellido_materno: "",
+          rol: "",
+          estado: ""
         });
       } catch (error) {
         console.error("Error al guardar en Firestore:", error);

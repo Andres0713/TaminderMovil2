@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import AltasForm from "./src3/components/AltasForm";
 import ReportesList from "./src3/components/ReportesList";
+import Bajas from "./src3/components/Bajas";
 
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +32,7 @@ function BajasScreen({ navigation }) {
       >
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
+      <Bajas/>
     </View>
   );
 }

@@ -57,10 +57,11 @@ const ReportesList = () => {
     if (editUser) {
       try {
         await setDoc(doc(db, "users", editUser.id), {
-          name: editUser.name,
-          age: editUser.age,
-          hoursWorked: editUser.hoursWorked || 0,
-          dailyPay: editUser.dailyPay || 0,
+          nombre: editUser.nombre,
+          apellido_paterno: editUser.apellido_paterno,
+          apellido_materno: editUser.apellido_materno,
+          rol: editUser.rol,
+          estado: editUser.estado
         });
         Alert.alert("Usuario actualizado", "La información del usuario ha sido actualizada.");
         setIsEditing(false);
@@ -70,47 +71,35 @@ const ReportesList = () => {
       }
     }
   };
-
+  /*//eliminar
+  const eliminar = (id) => {
+    deleteDoc(doc(db, "users", id));
+    closeModal()
+  };*/
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Lista de Reportes</Text>
 
       {/* Lista de usuarios */}
       <FlatList
-  data={users}
-  keyExtractor={(item) => item.id}
-  renderItem={({ item }) => (
-    <View style={styles.itemContainer}>
-      <TouchableOpacity
-        style={styles.item}
-        onPress={() => handleSelectUser(item)} // Selección del usuario al hacer clic
-      >
-        <Text style={styles.name}>Usuario: {item.usuario}</Text>
-        <Text style={styles.detail}>Nombre: {item.nombre}</Text>
-        <Text style={styles.detail}>Apellido Paterno: {item.apellido_paterno}</Text>
-        <Text style={styles.detail}>Apellido Materno: {item.apellido_materno}</Text>
-        <Text style={styles.detail}>Correo: {item.correo}</Text>
-        <Text style={styles.detail}>Rol: {item.rol}</Text>
-      </TouchableOpacity>
-      <View style={styles.buttonContainer}>
-        {/* Botón para eliminar */}
-        <Button
-          title="Eliminar"
-          onPress={() => eliminar(item.id)}
-          color="red"
-        />
-        {/* Botón para editar */}
-        <Button
-          title="Editar"
-          onPress={() => handleEditUser(item)}
-          color="blue"
-        />
-      </View>
-    </View>
-  )}
-  initialNumToRender={10} // Renderiza inicialmente 10 elementos
-  removeClippedSubviews={true} // Mejora el rendimiento
-/>
+        data={users.filter((user) => user.estado === "Activo")} // Filtra usuarios activos
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => handleSelectUser(item)} // Selección del usuario al hacer clic
+            >
+              <Text style={styles.detail}>Nombre: {item.nombre}</Text>
+              <Text style={styles.detail}>Apellido Paterno: {item.apellido_paterno}</Text>
+              <Text style={styles.detail}>Apellido Materno: {item.apellido_materno}</Text>
+              <Text style={styles.detail}>Rol: {item.rol}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        initialNumToRender={10} // Renderiza inicialmente 10 elementos
+        removeClippedSubviews={true} // Mejora el rendimiento
+      />
 
 
       {/* Modal para mostrar detalles */}
@@ -124,18 +113,16 @@ const ReportesList = () => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Detalles del Usuario</Text>
-              <Text style={styles.modalText}>Nombre: {selectedUser.name}</Text>
-              <Text style={styles.modalText}>Edad: {selectedUser.age}</Text>
+              <Text style={styles.modalText}>Nombre: {selectedUser.nombre}</Text>
+              <Text style={styles.modalText}>Apellido paterno: {selectedUser.apellido_paterno}</Text>
               <Text style={styles.modalText}>
-                Horas Trabajadas: {selectedUser.hoursWorked}
+                Apellido materno: {selectedUser.apellido_materno}
               </Text>
               <Text style={styles.modalText}>
-                Pago por Día: {selectedUser.dailyPay}
-              </Text>
-              <Text style={styles.modalText}>
-                Pago Total: {selectedUser.hoursWorked * selectedUser.dailyPay}
+                Rol: {selectedUser.rol}
               </Text>
               <Button title="Cerrar" onPress={closeModal} />
+              <Button title="Editar" onPress={() => eliminar(selectedUser.id)} />
             </View>
           </View>
         </Modal>
@@ -154,33 +141,34 @@ const ReportesList = () => {
               <Text style={styles.modalTitle}>Editar Usuario</Text>
               <TextInput
                 style={styles.input}
-                value={editUser?.name}
-                onChangeText={(text) => setEditUser({ ...editUser, name: text })}
+                value={editUser?.nombre}
+                onChangeText={(text) => setEditUser({ ...editUser, nombre: text })}
                 placeholder="Nombre"
               />
               <TextInput
                 style={styles.input}
-                value={String(editUser?.age)}
-                onChangeText={(text) => setEditUser({ ...editUser, age: Number(text) })}
-                placeholder="Edad"
-                keyboardType="numeric"
+                value={String(editUser?.apellido_paterno)}
+                onChangeText={(text) => setEditUser({ ...editUser, apellido_paterno: text })}
+                placeholder="Apellido paterno"
               />
               <TextInput
                 style={styles.input}
-                value={String(editUser?.hoursWorked || 0)}
-                onChangeText={(text) => setEditUser({ ...editUser, hoursWorked: Number(text) })}
-                placeholder="Horas Trabajadas"
-                keyboardType="numeric"
+                value={String(editUser?.apellido_materno || 0)}
+                onChangeText={(text) => setEditUser({ ...editUser, apellido_materno: text })}
+                placeholder="Apellido materno"
               />
               <TextInput
                 style={styles.input}
-                value={String(editUser?.dailyPay || 0)}
-                onChangeText={(text) => setEditUser({ ...editUser, dailyPay: Number(text) })}
-                placeholder="Pago por Día"
-                keyboardType="numeric"
+                value={String(editUser?.rol || 0)}
+                onChangeText={(text) => setEditUser({ ...editUser, rol: text })}
+                placeholder="Rol"
               />
-              <Button title="Guardar" onPress={handleSaveUser} />
-              <Button title="Cancelar" onPress={() => setIsEditing(false)} />
+              <TextInput
+                style={styles.input}
+                value={String(editUser?.estado || 0)}
+                onChangeText={(text) => setEditUser({ ...editUser, estado: text })}
+                placeholder="Rol"
+              />
             </View>
           </View>
         </Modal>
@@ -189,9 +177,7 @@ const ReportesList = () => {
   );
 };
 
-const eliminar = (id) => {
-  deleteDoc(doc(db, "users", id));
-};
+
 
 const styles = StyleSheet.create({
   container: {
