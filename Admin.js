@@ -1,61 +1,79 @@
 import * as React from "react";
-import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/Ionicons";
 import AltasForm from "./src3/components/AltasForm";
 import ReportesList from "./src3/components/ReportesList";
+import db from './src/utils/firebase'
 
 const Tab = createBottomTabNavigator();
 
-function AltasScreen({ navigation }) {
+function logOut() {
+  // Implementación de logout, por ejemplo:
+  Alert.alert(
+    "Cerrar sesión",
+    "¿Estás seguro de que deseas cerrar sesión?",
+    [
+      {
+        text: "Cancelar",
+        style: "cancel",
+      },
+      {
+        text: "Cerrar sesión",
+        onPress: () => {
+          function logOut() {
+            //poner el código para poder cerrar sesión
+            const auth = getAuth(db);
+            signOut(auth).then(() => {
+              console.log('Cerró sesión')
+            }).catch((error) => {
+              //An error happened
+            })
+          }
+        },
+      },
+    ],
+    { cancelable: true }
+  );
+}
+
+function AltasScreen() {
   return (
     <View style={styles.screen}>
       <AltasForm />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Bajas")}
-      >
+      <TouchableOpacity style={styles.button} onPress={logOut}>
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
     </View>
   );
 }
 
-function BajasScreen({ navigation }) {
+function BajasScreen() {
   return (
     <View style={styles.screen}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Modificaciones")}
-      >
+      <TouchableOpacity style={styles.button} onPress={logOut}>
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
     </View>
   );
 }
 
-function ModificacionesScreen({ navigation }) {
+function ModificacionesScreen() {
   return (
     <View style={styles.screen}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Reportes")}
-      >
+      <TouchableOpacity style={styles.button} onPress={logOut}>
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
     </View>
   );
 }
 
-function ReportesScreen({ navigation }) {
+function ReportesScreen() {
   return (
     <View style={styles.screen}>
       <ReportesList />
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Altas")}
-      >
+      <TouchableOpacity style={styles.button} onPress={logOut}>
         <Icon name="arrow-forward" size={20} color="#fff" />
       </TouchableOpacity>
     </View>
